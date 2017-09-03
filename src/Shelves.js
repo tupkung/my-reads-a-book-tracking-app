@@ -8,16 +8,18 @@ import BookGrids from './components/BookGrids'
  */
 class Shelves extends Component {
     render() {
-        const {data} = this.props;
-
+        const {data, onMoveBookShelf} = this.props;
         return (
             <div>
                 {
                     data.map(shelf=>
-                        <div className="bookshelf" key={shelf.sorId}>
-                            <h2 className="bookshelf-title">shelf.category</h2>
+                        <div className="bookshelf" key={shelf.sortId}>
+                            <h2 className="bookshelf-title">{shelf.category}</h2>
                             <div className="bookshelf-books">
-                                <BookGrids books={shelf.books}/>
+                                <BookGrids 
+                                    books={shelf.books} 
+                                    onMoveBookShelf={onMoveBookShelf}
+                                />
                             </div>
                         </div>
                     )

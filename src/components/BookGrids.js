@@ -7,7 +7,7 @@ import './BookGrids.css'
  */
 class BookGrids extends Component {
     render() {
-        const {books} = this.props;
+        const {books, onMoveBookShelf} = this.props;
         
         return (
             <ol className="books-grid">
@@ -18,7 +18,7 @@ class BookGrids extends Component {
                                 <div className="book-top">
                                 <div className="book-cover" style={{width: 128, height: 193, backgroundImage: `url("${book.imageUrl}")`}}></div>
                                 <div className="book-shelf-changer">
-                                    <select defaultValue={book.shelf}>
+                                    <select defaultValue={book.shelf} onChange={(event) => onMoveBookShelf(book, event.target.value)}>
                                         <option value="none" disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>

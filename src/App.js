@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 
 import Shelves from './Shelves';
+import sortBy from 'sort-by';
 
 /**
  * @description Represents an application
@@ -83,18 +84,63 @@ class App extends Component {
         ]
     };
 
+    constructor(props){
+        super(props);
+        this.onMoveBookShelf = this.onMoveBookShelf.bind(this);
+    }
 
+    /**
+     * @description: Execute when the user click on the menu to move a book to other shelf
+     * @param {object} movedBook 
+     * @param {string} categoryValue 
+     */
+    onMoveBookShelf(movedBook, categoryValue) {
+        const {shelves} = this.state;
+        const bookCategoryValue = movedBook.shelf;
+        movedBook.shelf = categoryValue;
+
+        this.setState({
+            shelves: shelves
+                        .filter(shelf => shelf.categoryValue === bookCategoryValue)
+                        .map(shelf => {
+                            return {
+                                category: shelf.category,
+                                categoryValue: shelf.categoryValue,
+                                sortId: shelf.sortId,
+                                books: shelf.books.filter(book=>book.id !== movedBook.id)
+                            };
+                        })
+                        .concat(
+                            shelves
+                                .filter(shelf => shelf.categoryValue === categoryValue)
+                                .map(shelf => {
+                                    return {
+                                        category: shelf.category,
+                                        categoryValue: shelf.categoryValue,
+                                        sortId: shelf.sortId,
+                                        books: shelf.books.concat([movedBook])
+                                    };
+                                })
+                        )
+                        .concat(
+                            shelves.filter(shelf => shelf.categoryValue !== bookCategoryValue && shelf.categoryValue !== categoryValue)
+                        )
+                        .sort(sortBy("sortId"))
+        });
+    }
 
     render() {
         const {shelves} = this.state;
-
         return (
             <div className="list-books">
                 <div className="list-books-title">
                 <h1>MyReads</h1>
                 </div>
                 <div className="list-books-content">
-                    <Shelves data={shelves}/>
+                    <Shelves 
+                        data={shelves} 
+                        onMoveBookShelf={this.onMoveBookShelf}
+                    />
                 </div>
             </div>
         );
