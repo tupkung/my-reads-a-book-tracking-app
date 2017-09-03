@@ -11,7 +11,7 @@ import BookGrids from './components/BookGrids'
  */
 class SearchBook extends Component {
     render(){
-        const {onSearch, searchResult} = this.props;
+        const {onSearch, searchResult, onMoveBookShelf} = this.props;
 
         return (
             <div className="search-books">
@@ -31,7 +31,10 @@ class SearchBook extends Component {
                 </div>
                 </div>
                 <div className="search-books-results">
-                    <BookGrids books={searchResult} />
+                    <BookGrids 
+                        books={searchResult} 
+                        onMoveBookShelf={onMoveBookShelf}
+                    />
                 </div>
             </div>
         );

@@ -45,6 +45,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.onMoveBookShelf = this.onMoveBookShelf.bind(this);
+        this.onSearch = this.onSearch.bind(this);
     }
 
     componentDidMount() {
@@ -121,6 +122,20 @@ class App extends Component {
     onSearch(event){
         const query = event.target.value;
 
+        BooksAPI.search(query, 10).then(result => {
+            this.setState({
+                searchResult : result.map(book => {
+                    return {
+                        id: book.id,
+                        imageUrl: book.imageLinks ? book.imageLinks.smallThumbnail : book.imageLinks,
+                        title: book.title,
+                        authors: book.authors ? book.authors.join(" , ") : book.authors,
+                        shelf: book.shelf || "none",
+                        rawData: book
+                    };
+                })
+            })
+        })
     }
 
     render() {
@@ -144,7 +159,11 @@ class App extends Component {
                     </div>
                 }/>
                 <Route path="/search" render={()=>
-                    <SearchBook searchResult={searchResult} onSearch={this.onSearch}/>
+                    <SearchBook 
+                        searchResult={searchResult} 
+                        onSearch={this.onSearch}
+                        onMoveBookShelf={this.onMoveBookShelf}
+                    />
                 } />
             </div>
         );
