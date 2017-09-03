@@ -3,12 +3,16 @@ import {Link} from 'react-router-dom';
 
 import './SearchBook.css';
 
+import BookGrids from './components/BookGrids'
+
 /**
  * @description: Represents Search book page
  * @constructor
  */
 class SearchBook extends Component {
     render(){
+        const {onSearch, searchResult} = this.props;
+
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -22,12 +26,12 @@ class SearchBook extends Component {
                     However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                     you don't find a specific author or title. Every search is limited by search terms.
                     */}
-                    <input type="text" placeholder="Search by title or author"/>
+                    <input type="text" placeholder="Search by title or author" onKeyUp={onSearch}/>
 
                 </div>
                 </div>
                 <div className="search-books-results">
-                <ol className="books-grid"></ol>
+                    <BookGrids books={searchResult} />
                 </div>
             </div>
         );

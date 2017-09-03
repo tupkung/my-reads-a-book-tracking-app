@@ -5,6 +5,7 @@ import Shelves from './Shelves';
 import SearchBook from './SearchBook';
 import sortBy from 'sort-by';
 import {Route, Link} from 'react-router-dom';
+import * as BooksAPI from './BooksAPI';
 
 /**
  * @description Represents an application
@@ -18,20 +19,7 @@ class App extends Component {
                 categoryValue: "currentlyReading",
                 sortId: 1,
                 books: [
-                    {
-                        id: "1a33d",
-                        title: "To Kill a Mockingbird",
-                        imageUrl: "http://books.google.com/books/content?id=PGR2AwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73-GnPVEyb7MOCxDzOYF1PTQRuf6nCss9LMNOSWBpxBrz8Pm2_mFtWMMg_Y1dx92HT7cUoQBeSWjs3oEztBVhUeDFQX6-tWlWz1-feexS0mlJPjotcwFqAg6hBYDXuK_bkyHD-y&source=gbs_api",
-                        authors: "Harper Lee",
-                        shelf: "currentlyReading"
-                    },
-                    {
-                        id: "12s3",
-                        title: "Ender's Game",
-                        imageUrl: "http://books.google.com/books/content?id=yDtCuFHXbAYC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72RRiTR6U5OUg3IY_LpHTL2NztVWAuZYNFE8dUuC0VlYabeyegLzpAnDPeWxE6RHi0C2ehrR9Gv20LH2dtjpbcUcs8YnH5VCCAH0Y2ICaKOTvrZTCObQbsfp4UbDqQyGISCZfGN&source=gbs_api",
-                        authors: "Orson Scott Card",
-                        shelf: "currentlyReading"
-                    }
+                    
                 ]
             },
             {
@@ -39,20 +27,7 @@ class App extends Component {
                 categoryValue: "wantToRead",
                 sortId: 2,
                 books: [
-                    {
-                        id: "33232",
-                        title: "1776",
-                        imageUrl: "http://books.google.com/books/content?id=uu1mC6zWNTwC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73pGHfBNSsJG9Y8kRBpmLUft9O4BfItHioHolWNKOdLavw-SLcXADy3CPAfJ0_qMb18RmCa7Ds1cTdpM3dxAGJs8zfCfm8c6ggBIjzKT7XR5FIB53HHOhnsT7a0Cc-PpneWq9zX&source=gbs_api",
-                        authors: "David McCullough",
-                        shelf: "wantToRead"
-                    },
-                    {
-                        id: "33422",
-                        title: "Harry Potter and the Sorcerer's Stone",
-                        imageUrl: "http://books.google.com/books/content?id=wrOQLV6xB-wC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72G3gA5A-Ka8XjOZGDFLAoUeMQBqZ9y-LCspZ2dzJTugcOcJ4C7FP0tDA8s1h9f480ISXuvYhA_ZpdvRArUL-mZyD4WW7CHyEqHYq9D3kGnrZCNiqxSRhry8TiFDCMWP61ujflB&source=gbs_api",
-                        authors: "J.K. Rowling",
-                        shelf: "wantToRead"
-                    }
+                    
                 ]
             },
             {
@@ -60,35 +35,43 @@ class App extends Component {
                 categoryValue: "read",
                 sortId: 3,
                 books: [
-                    {
-                        id: "4434",
-                        title: "The Hobbit",
-                        imageUrl: "http://books.google.com/books/content?id=pD6arNyKyi8C&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE70Rw0CCwNZh0SsYpQTkMbvz23npqWeUoJvVbi_gXla2m2ie_ReMWPl0xoU8Quy9fk0Zhb3szmwe8cTe4k7DAbfQ45FEzr9T7Lk0XhVpEPBvwUAztOBJ6Y0QPZylo4VbB7K5iRSk&source=gbs_api",
-                        authors: "J.R.R. Tolkien",
-                        shelf: "read"
-                    },
-                    {
-                        id: "5554",
-                        title: "Oh, the Places You'll Go!",
-                        imageUrl: "http://books.google.com/books/content?id=1q_xAwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE712CA0cBYP8VKbEcIVEuFJRdX1k30rjLM29Y-dw_qU1urEZ2cQ42La3Jkw6KmzMmXIoLTr50SWTpw6VOGq1leINsnTdLc_S5a5sn9Hao2t5YT7Ax1RqtQDiPNHIyXP46Rrw3aL8&source=gbs_api",
-                        authors: "Seuss",
-                        shelf: "read"
-                    },
-                    {
-                        id: "6789",
-                        title: "The Adventures of Tom Sawyer",
-                        imageUrl: "http://books.google.com/books/content?id=32haAAAAMAAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72yckZ5f5bDFVIf7BGPbjA0KYYtlQ__nWB-hI_YZmZ-fScYwFy4O_fWOcPwf-pgv3pPQNJP_sT5J_xOUciD8WaKmevh1rUR-1jk7g1aCD_KeJaOpjVu0cm_11BBIUXdxbFkVMdi&source=gbs_api",
-                        authors: "Mark Twain",
-                        shelf: "read"
-                    }
+                    
                 ]
             }
-        ]
+        ],
+        searchResult: []
     };
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.onMoveBookShelf = this.onMoveBookShelf.bind(this);
+    }
+
+    componentDidMount() {
+        const {shelves} = this.state;
+
+        BooksAPI.getAll().then(books=>{
+            this.setState({
+                shelves : shelves.map(shelf=>{
+                    return {
+                        category: shelf.category,
+                        categoryValue: shelf.categoryValue,
+                        sortId: shelf.sortId,
+                        books: books.filter(book => book.shelf === shelf.categoryValue).map(book => {
+
+                            return {
+                                id: book.id,
+                                imageUrl: book.imageLinks.smallThumbnail,
+                                title: book.title,
+                                authors: book.authors ? book.authors.join(" , ") : book.authors,
+                                shelf: book.shelf,
+                                rawData: book
+                            }
+                        })
+                    }
+                })
+            });
+        });
     }
 
     /**
@@ -131,8 +114,17 @@ class App extends Component {
         });
     }
 
+    /**
+     * @description: Execute when the user typing on Search box
+     * @param {object} event 
+     */
+    onSearch(event){
+        const query = event.target.value;
+
+    }
+
     render() {
-        const {shelves} = this.state;
+        const {shelves, searchResult} = this.state;
         return (
             <div className="app">
                 <Route exact path="/" render={()=>
@@ -151,7 +143,9 @@ class App extends Component {
                         </div>
                     </div>
                 }/>
-                <Route path="/search" component={SearchBook} />
+                <Route path="/search" render={()=>
+                    <SearchBook searchResult={searchResult} onSearch={this.onSearch}/>
+                } />
             </div>
         );
     }
