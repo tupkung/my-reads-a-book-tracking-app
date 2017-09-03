@@ -122,17 +122,25 @@ class App extends Component {
      * @param {object} event 
      */
     onSearch(event){
+        const {shelves} = this.state;
         const query = event.target.value;
+
+        
 
         BooksAPI.search(query, 10).then(result => {
             this.setState({
                 searchResult : result.map(book => {
+                    const onShelfBooks = shelves
+                                            .map(shelf=>shelf.books)
+                                            .reduce((current, next)=>current.concat(next))
+                                            .filter(b => b.id === book.id);
+                    
                     return {
                         id: book.id,
                         imageUrl: book.imageLinks ? book.imageLinks.smallThumbnail : book.imageLinks,
                         title: book.title,
                         authors: book.authors ? book.authors.join(" , ") : book.authors,
-                        shelf: book.shelf || "none",
+                        shelf: onShelfBooks.length > 0 ? onShelfBooks.reduce((current,next) => current + next.shelf, "") : "none",
                         rawData: book
                     };
                 })
@@ -142,7 +150,7 @@ class App extends Component {
 
     render() {
         const {shelves, searchResult} = this.state;
-        
+
         return (
             <div className="app">
                 <Route exact path="/" render={()=>
@@ -161,12 +169,20 @@ class App extends Component {
                         </div>
                     </div>
                 }/>
-                <Route path="/search" render={()=>
-                    <SearchBook 
-                        searchResult={searchResult} 
-                        onSearch={this.onSearch}
-                        onMoveBookShelf={this.onMoveBookShelf}
-                    />
+                <Route path="/search" render={({history})=> {
+                    return (<SearchBook 
+                                searchResult={searchResult} 
+                                onSearch={this.onSearch}
+                                onCloseSearch={(event)=>{
+                                    event.preventDefault();
+                                    this.setState({
+                                        searchResult: []
+                                    });
+                                    history.push("/");
+                                }}
+                                onMoveBookShelf={this.onMoveBookShelf}
+                            />);
+                    }
                 } />
             </div>
         );

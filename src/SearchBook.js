@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
 
 import './SearchBook.css';
 
@@ -10,13 +9,14 @@ import BookGrids from './components/BookGrids'
  * @constructor
  */
 class SearchBook extends Component {
+
     render(){
-        const {onSearch, searchResult, onMoveBookShelf} = this.props;
+        const {onSearch, searchResult, onMoveBookShelf, onCloseSearch} = this.props;
 
         return (
             <div className="search-books">
                 <div className="search-books-bar">
-                <Link className="close-search" to="/">Close</Link>
+                <a className="close-search" onClick={onCloseSearch}>Close</a>
                 <div className="search-books-input-wrapper">
                     {/*
                     NOTES: The search from BooksAPI is limited to a particular set of search terms.
