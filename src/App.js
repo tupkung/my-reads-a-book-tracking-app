@@ -126,26 +126,32 @@ class App extends Component {
         const query = event.target.value;
 
         
-
-        BooksAPI.search(query, 10).then(result => {
+        if(query.length >= 3){
+            BooksAPI.search(query, 10).then(result => {
+                !result.error && this.setState({
+                    searchResult : result.map(book => {
+                        const onShelfBooks = shelves
+                                                .map(shelf=>shelf.books)
+                                                .reduce((current, next)=>current.concat(next))
+                                                .filter(b => b.id === book.id);
+                        
+                        return {
+                            id: book.id,
+                            imageUrl: book.imageLinks ? book.imageLinks.smallThumbnail : book.imageLinks,
+                            title: book.title,
+                            authors: book.authors ? book.authors.join(" , ") : book.authors,
+                            shelf: onShelfBooks.length > 0 ? onShelfBooks.reduce((current,next) => current + next.shelf, "") : "none",
+                            rawData: book
+                        };
+                    })
+                });
+            });
+        }else{
             this.setState({
-                searchResult : result.map(book => {
-                    const onShelfBooks = shelves
-                                            .map(shelf=>shelf.books)
-                                            .reduce((current, next)=>current.concat(next))
-                                            .filter(b => b.id === book.id);
-                    
-                    return {
-                        id: book.id,
-                        imageUrl: book.imageLinks ? book.imageLinks.smallThumbnail : book.imageLinks,
-                        title: book.title,
-                        authors: book.authors ? book.authors.join(" , ") : book.authors,
-                        shelf: onShelfBooks.length > 0 ? onShelfBooks.reduce((current,next) => current + next.shelf, "") : "none",
-                        rawData: book
-                    };
-                })
-            })
-        })
+                searchResult: []
+            });
+        }
+        
     }
 
     render() {
