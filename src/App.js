@@ -46,6 +46,7 @@ class App extends Component {
         super(props);
         this.onMoveBookShelf = this.onMoveBookShelf.bind(this);
         this.onSearch = this.onSearch.bind(this);
+        this.createOnCloseSearch = this.createOnCloseSearch.bind(this);
     }
 
     componentDidMount() {
@@ -150,8 +151,21 @@ class App extends Component {
             this.setState({
                 searchResult: []
             });
+        }    
+    }
+
+    /**
+     * @description: Create the event function when user search the books
+     * @param {object} history 
+     */
+    createOnCloseSearch(history){
+        return (event) => {
+            event.preventDefault();
+            this.setState({
+                searchResult:[]
+            });
+            history.push("/");
         }
-        
     }
 
     render() {
@@ -179,13 +193,7 @@ class App extends Component {
                     return (<SearchBook 
                                 searchResult={searchResult} 
                                 onSearch={this.onSearch}
-                                onCloseSearch={(event)=>{
-                                    event.preventDefault();
-                                    this.setState({
-                                        searchResult: []
-                                    });
-                                    history.push("/");
-                                }}
+                                onCloseSearch={this.createOnCloseSearch(history)}
                                 onMoveBookShelf={this.onMoveBookShelf}
                             />);
                     }
