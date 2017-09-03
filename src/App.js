@@ -62,7 +62,7 @@ class App extends Component {
 
                             return {
                                 id: book.id,
-                                imageUrl: book.imageLinks.smallThumbnail,
+                                imageUrl: book.imageLinks ? book.imageLinks.smallThumbnail : book.imageLinks,
                                 title: book.title,
                                 authors: book.authors ? book.authors.join(" , ") : book.authors,
                                 shelf: book.shelf,
@@ -85,34 +85,36 @@ class App extends Component {
         const bookCategoryValue = movedBook.shelf;
         movedBook.shelf = categoryValue;
 
-        this.setState({
-            shelves: shelves
-                        .filter(shelf => shelf.categoryValue === bookCategoryValue)
-                        .map(shelf => {
-                            return {
-                                category: shelf.category,
-                                categoryValue: shelf.categoryValue,
-                                sortId: shelf.sortId,
-                                books: shelf.books.filter(book=>book.id !== movedBook.id)
-                            };
-                        })
-                        .concat(
-                            shelves
-                                .filter(shelf => shelf.categoryValue === categoryValue)
-                                .map(shelf => {
-                                    return {
-                                        category: shelf.category,
-                                        categoryValue: shelf.categoryValue,
-                                        sortId: shelf.sortId,
-                                        books: shelf.books.concat([movedBook])
-                                    };
-                                })
-                        )
-                        .concat(
-                            shelves.filter(shelf => shelf.categoryValue !== bookCategoryValue && shelf.categoryValue !== categoryValue)
-                        )
-                        .sort(sortBy("sortId"))
-        });
+        BooksAPI.update(movedBook, categoryValue).then(()=>{
+            this.setState({
+                shelves: shelves
+                            .filter(shelf => shelf.categoryValue === bookCategoryValue)
+                            .map(shelf => {
+                                return {
+                                    category: shelf.category,
+                                    categoryValue: shelf.categoryValue,
+                                    sortId: shelf.sortId,
+                                    books: shelf.books.filter(book=>book.id !== movedBook.id)
+                                };
+                            })
+                            .concat(
+                                shelves
+                                    .filter(shelf => shelf.categoryValue === categoryValue)
+                                    .map(shelf => {
+                                        return {
+                                            category: shelf.category,
+                                            categoryValue: shelf.categoryValue,
+                                            sortId: shelf.sortId,
+                                            books: shelf.books.concat([movedBook])
+                                        };
+                                    })
+                            )
+                            .concat(
+                                shelves.filter(shelf => shelf.categoryValue !== bookCategoryValue && shelf.categoryValue !== categoryValue)
+                            )
+                            .sort(sortBy("sortId"))
+            });
+        })
     }
 
     /**
@@ -140,6 +142,7 @@ class App extends Component {
 
     render() {
         const {shelves, searchResult} = this.state;
+        
         return (
             <div className="app">
                 <Route exact path="/" render={()=>
